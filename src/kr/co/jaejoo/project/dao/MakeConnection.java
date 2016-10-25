@@ -2,7 +2,6 @@ package kr.co.jaejoo.project.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class MakeConnection {
@@ -12,10 +11,10 @@ public class MakeConnection {
 	// driver에 접속하기 위한 정보
 	private String driver = "oracle.jdbc.driver.OracleDriver";
 	// aws주소
-	private String url = "jdbc:oracle:thin:pcproject01.cnvbvqxzbhla.us-west-2.rds.amazonaws.com:1521:orcl";
+	private String url = "jdbc:oracle:thin:@pcproject01.cnvbvqxzbhla.us-west-2.rds.amazonaws.com:1521:orcl";
 	private String user ="kimjaejoo"; // 드라이버 아이디
 	private String password ="rlawown00"; // 드라이버 비번
-	private Connection conn;
+	private Connection conn ;
 	
 	private MakeConnection(){}
 	
