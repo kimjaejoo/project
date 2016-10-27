@@ -5,24 +5,26 @@ import java.awt.Font;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 import kr.co.jaejoo.project.dao.MemberDAO;
-import kr.co.jaejoo.project.dao.member;
+
 import kr.co.jaejoo.project.dto.MemberDTO;
 
-public class LoginMain extends JFrame implements ActionListener {
-	// 로그인, 회원가입 버튼
+public class LoginMain extends JFrame implements ActionListener{
 
 	CardLayout lay;
 
@@ -32,7 +34,7 @@ public class LoginMain extends JFrame implements ActionListener {
 	JButton loginbtn = new JButton("로그인");
 	JButton joinbtn = new JButton("회원가입");
 	JTextField idtf = new JTextField(); // 괄호안에 글을 넣으면 기본값으로 들어간다.
-	JTextField pwtf = new JTextField();
+	JPasswordField pwtf = new JPasswordField();
 	JLabel idlabel = new JLabel("ID");
 	JLabel pwlabel = new JLabel("PW");
 	JLabel mainlabel = new JLabel("Acorn PC Room");
@@ -47,10 +49,12 @@ public class LoginMain extends JFrame implements ActionListener {
 	Object obj;
 
 	MemberDAO memberDAO = new MemberDAO();
-	
-	
+
+	private MainProcess main;
+
 	public static void main(String[] args) {
 		new LoginMain();
+
 	}
 
 	public LoginMain() {
@@ -84,10 +88,17 @@ public class LoginMain extends JFrame implements ActionListener {
 		setBounds(0, 0, 500, 600);
 		setLayout(lay);
 
-		loginbtn.setBounds(30, 400, 200, 50);
-		joinbtn.setBounds(250, 400, 200, 50);
+		loginbtn.setBounds(30, 400, 200, 50); // 로그인 버튼
+		joinbtn.setBounds(250, 400, 200, 50); // 회원가입 버튼
 		idtf.setBounds(170, 250, 250, 25);
 		pwtf.setBounds(170, 300, 250, 25);
+		
+		// keylistener를 사용하지 않고 enter를 사용한다.
+		// 여기서 어케해야하는지 모르겟다 .... 머리 존나아프다...비밀번호를 입력하고 엔터를 누르면 loginbtn이 눌리는 이벤트를 주어야한다.
+		// 우선은 비밀번호칸에서 엔터를 누르면 '실행' 이라는 메세지가 뜬다.
+		pwtf.registerKeyboardAction(this, "login", KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+				JComponent.WHEN_FOCUSED);
+		
 		idlabel.setBounds(110, 250, 250, 25);
 		pwlabel.setBounds(110, 300, 250, 25);
 		mainlabel.setBounds(200, 25, 250, 250);
@@ -118,8 +129,11 @@ public class LoginMain extends JFrame implements ActionListener {
 
 		// 마우스 클릭으로 로그인, 회원가입 버튼을 작동시킴, this는 이 클래스안의 메소드를 사용하기 위함
 		joinbtn.addActionListener(this);
-		loginbtn.addActionListener(this);
 
+		loginbtn.setActionCommand("login"); // 로그인 버튼에 액션을 추가한다.
+		loginbtn.addActionListener(this);
+		
+		
 		joinJoinBtn.addActionListener(this);
 		joinCancelBtn.addActionListener(this);
 		joinIdCheckBtn.addActionListener(this);
@@ -154,22 +168,34 @@ public class LoginMain extends JFrame implements ActionListener {
 		join.add(joinCancelBtn);
 		join.add(joineEmailIn);
 		join.add(joinTelIn);
+
 		// panel을 프레임위에 추가한다.
 		add(login, "loginpanel");
 		add(join, "joinpanel");
 
 		// 프레임을 보이기위한것.
 		setVisible(true);
+		// 프레임의 x버튼을 누르면 종료되어지게 만든다.
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
+
+	public void setMain(MainProcess main) {
+		this.main = main;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
 		obj = e.getSource();
 
+		if(e.getActionCommand() == "login"){
+			System.out.println("실행");
+			
+		}
+		
 		if (obj == joinbtn) {
 
 			System.out.println("회원가입 버튼");
@@ -218,12 +244,10 @@ public class LoginMain extends JFrame implements ActionListener {
 				if (matcherEmail.matches() && matcherId.matches() && matcherTel.matches()) {
 					System.out.println("정규표현식");
 
-					
 					MemberDTO joindto = new MemberDTO();
-					
-					// 모든 사용자의 값을 불러오기 위해서 selectAll을 사용한다. 
-					
-					
+
+					// 모든 사용자의 값을 불러오기 위해서 selectAll을 사용한다.
+
 					joindto.setName(name);
 					joindto.setId(id);
 					joindto.setPassword(password);
@@ -239,11 +263,11 @@ public class LoginMain extends JFrame implements ActionListener {
 
 				} else if (matcherEmail.matches() == false) {
 					JOptionPane.showMessageDialog(this, "이메일 형식을 확인해주세요");
-				} else if (matcherId.matches() == false ) {
+				} else if (matcherId.matches() == false) {
 					JOptionPane.showMessageDialog(this, "ID는 영어와 숫자로만 사용이 가능합니다.");
 				} else if (matcherTel.matches() == false) {
 					JOptionPane.showMessageDialog(this, "정확한 휴대폰번호를 작성해주세요");
-				} else  {
+				} else {
 					System.out.println("이미 사용중인 id입니다.");
 				}
 			}
@@ -253,20 +277,38 @@ public class LoginMain extends JFrame implements ActionListener {
 		} else if (obj == joinCancelBtn) {
 			System.out.println("회원가입 취소버튼");
 			lay.show(getContentPane(), "loginpanel");
-		} else if (obj == loginbtn){
+		} else if (obj == loginbtn) {
 			System.out.println("로그인 버튼눌림");
 			MemberDTO logindto = memberDAO.loginData(idtf.getText(), pwtf.getText());
-			
-			if(idtf.getText().equals("")||pwtf.getText().equals("")){
+
+			if (idtf.getText().equals("") || pwtf.getText().equals("")) {
 				System.out.println("빈칸이네요");
-			}else if (logindto.getId().equals(idtf.getText())){
-			System.out.println("틀린 아이디");
-			// 아.. 로그인은 selectAll로 해야하니...?
-			}else{
-				System.out.println(logindto.getId()); // 우선은 아이디를 가지고 오는 것을 성공함. 만약 입력한 값이 db안에 없다면 틀리다고 말해야함
-				
+			} else if (logindto == null) {
+				// 나는 로그인을 할때 db안에 없는 값을 입력하면 없는 아이디라는 것을 알려줘야한다.
+				// 근데 아이디를 잘못입력하면 nullpoint가 뜬다.....그건....왜지....
+				// logindto안에 있는 id와 비교하는 것이 아닌 그냥 logindto가 null값을 return하면
+				// sysout하도록 한다.
+				System.out.println("틀린 아이디 또는 없는 아이디");
+				JOptionPane.showMessageDialog(this, "틀린 아이디 또는 비밀번호 입니다");
+				idtf.setText(null);
+				pwtf.setText(null);
+				// 아.. 로그인은 selectAll로 해야하니...?
+			} else {
+				System.out.println("로그인 성공");
+				System.out.println(logindto.getId()); // 우선은 아이디를 가지고 오는 것을 성공함.
+														// 만약 입력한 값이 db안에 없다면
+														// 틀리다고 말해야함
+				// 코드가 길어지는 것을 방지하기 위해서 다른클래스를 생성해서 불러오는 방식으로 사용이 가능할까?
+				// 난 시도한다.
+
+				// 메인 프로세스? 라는 클래스를 만들고 그것이 모든 상황을 통제한다.
+				// 난 로그인에 성공했으며 다른클래스 안에잇는 프레임을 불러온다.
+				main.showFrame();
+
 			}
 		}
-
+		
 	}
+
+	
 }

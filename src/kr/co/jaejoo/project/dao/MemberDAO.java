@@ -11,7 +11,7 @@ import kr.co.jaejoo.project.dto.MemberDTO;
 public class MemberDAO implements member {
 	private Connection conn;
 	private PreparedStatement pstmt;
-	private ResultSet rs ;
+	private ResultSet rs;
 	private StringBuffer sb = new StringBuffer();
 
 	// 기본생성자에 싱글톤을 불러옴으로서 연결을 시도한다.
@@ -54,6 +54,7 @@ public class MemberDAO implements member {
 		return list;
 	}
 
+	// 로그인을 위한 메서드
 	public ArrayList<MemberDTO> loginAll(String id, String password) {
 		// 리스트의 정보를 담기위해 Arraylist를 선언한다.
 		ArrayList<MemberDTO> list = new ArrayList<MemberDTO>();
@@ -70,7 +71,7 @@ public class MemberDAO implements member {
 			pstmt.setString(1, id);
 			pstmt.setString(2, password);
 			rs = pstmt.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				int membernum = rs.getInt("membernum");
 				String name = rs.getString("name");
 				String tel = rs.getString("tel");
@@ -85,10 +86,10 @@ public class MemberDAO implements member {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return list;
 	}
 
-	
 	// 전체의 정보중에 하나만 조회하기 위함으로 사용한다. return은 dto로한다.
 	@Override // 재정의 : interface의 메소드의 내용을 재정의 하여 사용할 수 있도록한다.
 	public MemberDTO selectOne(int membernum) {
@@ -130,13 +131,13 @@ public class MemberDAO implements member {
 		sb.append(" SELECT membernum, name, tel, id, password, email, mileage, time ");
 		sb.append("FROM member ");
 		sb.append("WHERE id = ? and password = ? ");
-		
+
 		try {
 			pstmt = conn.prepareStatement(sb.toString());
 			pstmt.setString(1, id);
 			pstmt.setString(2, password);
 			rs = pstmt.executeQuery();
-			while(rs.next()){
+			while (rs.next()) {
 				int membernum = rs.getInt("membernum");
 				String name = rs.getString("name");
 				String tel = rs.getString("tel");
@@ -145,7 +146,7 @@ public class MemberDAO implements member {
 				String time = rs.getString("time");
 				memberdto = new MemberDTO(membernum, name, email, id, password, tel, mileage, time);
 			}
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -176,8 +177,7 @@ public class MemberDAO implements member {
 
 	}
 
-	
-	//회원정보를 수정하는데 사용이 가능한 메서드 
+	// 회원정보를 수정하는데 사용이 가능한 메서드
 	@Override
 	public void updateOne(MemberDTO memberdto) {
 		// TODO Auto-generated method stub
@@ -185,7 +185,7 @@ public class MemberDAO implements member {
 		sb.append("UPDATE member ");
 		sb.append("SET (name = ? , email = ? , id = ? , password = ? , tel = ? , mileage = ? ) ");
 		sb.append("WHERE membernum = ? ");
-		
+
 		try {
 			pstmt = conn.prepareStatement(sb.toString());
 			pstmt.setString(1, memberdto.getName());
@@ -202,17 +202,17 @@ public class MemberDAO implements member {
 		}
 	}
 
-	// 회원정보를 삭제하는 메서드 
+	// 회원정보를 삭제하는 메서드
 	@Override
 	public void deleteOne(int membernum) {
 		// TODO Auto-generated method stub
 		sb.setLength(0);
 		sb.append("DELETE FROM member ");
 		sb.append("WHERE membernum = ? ");
-		
+
 		try {
 			pstmt = conn.prepareStatement(sb.toString());
-			pstmt.setInt(1,	membernum);
+			pstmt.setInt(1, membernum);
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -224,14 +224,17 @@ public class MemberDAO implements member {
 	@Override
 	public void close() {
 		// TODO Auto-generated method stub
-				try {
-					if(conn != null)conn.close();
-					if(rs!=null)rs.close();
-					if(pstmt != null ) pstmt.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
+		try {
+			if (conn != null)
+				conn.close();
+			if (rs != null)
+				rs.close();
+			if (pstmt != null)
+				pstmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }
