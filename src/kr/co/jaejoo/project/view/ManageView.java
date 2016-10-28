@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
-import com.sun.corba.se.impl.protocol.BootstrapServerRequestDispatcher;
+
 
 public class ManageView extends JFrame {
 	// 메인화면 
