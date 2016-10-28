@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: PcRoomProject
-Bundle-SymbolicName: PcRoomProject
-Bundle-Version: 1.0.0.qualifier
-Export-Package: kr.co.jaejoo.project.dao,
- kr.co.jaejoo.project.dto,
- kr.co.jaejoo.project.pcserver,
- kr.co.jaejoo.project.view
